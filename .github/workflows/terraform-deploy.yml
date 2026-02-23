@@ -1,0 +1,46 @@
+name: Terraform Multi-account Deploy Workflow
+on:
+    push:
+        branches:
+            - main
+            - develop
+            - 'feature/**'
+
+# permission can be added at job level or workflow level
+permissions:
+  id-token: write   # This is required for requesting the JWT
+  contents: read    # This is required for actions/checkout
+
+jobs:
+    run-terraform:
+        environment: |
+          ${{
+            github.ref == 'refs/heads/main' && 'production' ||
+            github.ref == 'refs/heads/develop' && 'staging' ||
+            startsWith(github.ref, 'refs/heads/feature/') && 'dev'
+          }}
+        runs-on: ubuntu-22.04
+
+        defaults:
+          run:
+            working-directory: root-module/
+
+        steps:
+        - name: Checkout Repository
+          uses: actions/checkout@v3
+
+        - name: Login to AWS Role
+          uses: aws-actions/configure-aws-credentials@v5.1.1
+          with:
+            aws-region: us-east-1
+            role-to-assume: ${{ vars.IAM_ROLE }}
+            role-session-name: gha-login-session
+
+        - name: Initialize Terraform
+          run: terraform init -backend-config="bucket=${{ vars.TF_STATE_BUCKET }}"
+
+        - name: Check Terraform Format (basic linting)
+          run: terraform fmt -check
+
+        - name: Deploy Infrastructure
+          run: terraform apply -var-file=homework-project-${{ vars.STAGE }}.tfvars -input=false -auto-approve
