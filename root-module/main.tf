@@ -9,3 +9,8 @@ module "custom_vpc" {
   private_subnet_cidrs = var.private_subnet_cidrs
   azs                  = var.azs
 }
+
+module "eks" {
+  source = "../eks-module"
+  cluster_name = var.cluster_name
+}
