@@ -15,8 +15,8 @@ jobs:
     run-terraform:
         environment: |
           ${{
-            github.ref == 'refs/heads/main' && 'production' ||
-            github.ref == 'refs/heads/develop' && 'staging' ||
+            github.ref == 'refs/heads/main' && 'dev' ||
+            github.ref == 'refs/heads/develop' && 'dev' ||
             startsWith(github.ref, 'refs/heads/feature/') && 'dev'
           }}
         runs-on: ubuntu-22.04

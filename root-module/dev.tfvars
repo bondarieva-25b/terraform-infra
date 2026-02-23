@@ -1,4 +1,4 @@
 # VPC configs
-project_name    = "project-x"
-vpc_cidr_prefix = "10.20"
+project_name    = "final-project-practice"
+vpc_cidr_prefix = "10.0"
 environment     = "dev"
