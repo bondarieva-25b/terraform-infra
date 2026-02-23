@@ -2,7 +2,7 @@ resource "aws_vpc" "custom_vpc" {
   cidr_block = local.vpc_cidr
 
   tags = {
-    Name = "project-x-${var.environment}-vpc"
+    Name = "${var.project_name}-${var.environment}-vpc"
   }
 }
 
