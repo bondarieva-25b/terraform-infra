@@ -43,4 +43,4 @@ jobs:
           run: terraform fmt -check
 
         - name: Deploy Infrastructure
-          run: terraform apply -var-file=homework-project-${{ vars.STAGE }}.tfvars -input=false -auto-approve
+          run: terraform apply -var-file=${{ vars.STAGE }}.tfvars -input=false -auto-approve
