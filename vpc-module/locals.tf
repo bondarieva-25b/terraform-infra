@@ -1,21 +1,16 @@
 locals {
-  vpc_cidr          = "${var.vpc_cidr_prefix}.0.0/16"
-  pub_subnet1_cidr  = "${var.vpc_cidr_prefix}.9.0/24"
-  pub_subnet2_cidr  = "${var.vpc_cidr_prefix}.10.0/24"
-  pub_subnet3_cidr  = "${var.vpc_cidr_prefix}.11.0/24"
-  priv_subnet1_cidr = "${var.vpc_cidr_prefix}.12.0/24"
-  priv_subnet2_cidr = "${var.vpc_cidr_prefix}.13.0/24"
-  priv_subnet3_cidr = "${var.vpc_cidr_prefix}.14.0/24"
-  subnet1_zone      = "us-east-1a"
-  subnet2_zone      = "us-east-1b"
-  subnet3_zone      = "us-east-1c"
-  pub_subnet1_tag   = "${var.project_name}-${var.environment}-public-subnet-1"
-  pub_subnet2_tag   = "${var.project_name}-${var.environment}-public-subnet-2"
-  pub_subnet3_tag   = "${var.project_name}-${var.environment}-public-subnet-3"
-  priv_subnet1_tag  = "${var.project_name}-${var.environment}-private-subnet-1"
-  priv_subnet2_tag  = "${var.project_name}-${var.environment}-private-subnet-2"
-  priv_subnet3_tag  = "${var.project_name}-${var.environment}-private-subnet-3"
-  igw_tag           = "${var.project_name}-${var.environment}-igw"
-  pub_rt_tag        = "${var.project_name}-${var.environment}-public-rt"
-  priv_rt_tag       = "${var.project_name}-${var.environment}-private-rt"
+  vpc_cidr = var.vpc_cidr
+  igw_tag  = "${var.project_name}-${var.environment}-igw"
+
+  public_subnets = {
+    public_1 = { cidr = var.public_subnet_cidrs[0], az = var.azs[0] }
+    public_2 = { cidr = var.public_subnet_cidrs[1], az = var.azs[1] }
+    public_3 = { cidr = var.public_subnet_cidrs[2], az = var.azs[2] }
+  }
+
+  private_subnets = {
+    private_1 = { cidr = var.private_subnet_cidrs[0], az = var.azs[0] }
+    private_2 = { cidr = var.private_subnet_cidrs[1], az = var.azs[1] }
+    private_3 = { cidr = var.private_subnet_cidrs[2], az = var.azs[2] }
+  }
 }
