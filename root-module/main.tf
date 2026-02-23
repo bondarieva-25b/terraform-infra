@@ -11,6 +11,6 @@ module "custom_vpc" {
 }
 
 module "eks" {
-  source = "../eks-module"
+  source       = "../eks-module"
   cluster_name = var.cluster_name
 }
