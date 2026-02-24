@@ -22,6 +22,13 @@ resource "aws_eks_cluster" "this" {
   ]
 }
 
+# Grants the node the permissions it needs to join the cluster
+resource "aws_eks_access_entry" "node" {
+  cluster_name  = aws_eks_cluster.this.name
+  principal_arn = aws_iam_role.node.arn
+  type          = "EC2_LINUX"
+}
+
 resource "aws_eks_access_entry" "admin_user" {
   count = var.admin_user_arn != "" ? 1 : 0
 

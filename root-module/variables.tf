@@ -43,3 +43,16 @@ variable "github_terraform_role_arn" {
 variable "github_cicd_role_arn" {
   type = string
 }
+
+# ASG
+variable "node_min_size" {
+  type = number
+}
+
+variable "node_max_size" {
+  type = number
+}
+
+variable "node_desired_size" {
+  type = number
+}

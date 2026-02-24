@@ -32,3 +32,19 @@ variable "vpc_id" {
   type        = string
   description = "VPC ID where the EKS cluster will be deployed"
 }
+
+# Auto Scaling Group
+variable "node_min_size" {
+  type        = number
+  description = "Minimum number of nodes in the Auto Scaling Group"
+}
+
+variable "node_max_size" {
+  type        = number
+  description = "Maximum number of nodes in the Auto Scaling Group"
+}
+
+variable "node_desired_size" {
+  type        = number
+  description = "Desired number of nodes in the Auto Scaling Group"
+}
