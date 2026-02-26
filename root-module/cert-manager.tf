@@ -1,0 +1,55 @@
+data "aws_route53_zone" "main" {
+  name = "team312.com"
+}
+
+resource "aws_iam_role" "cert_manager" {
+  name = "${var.cluster_name}-cert-manager-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = "sts:AssumeRoleWithWebIdentity"
+      Principal = {
+        Federated = module.eks.oidc_provider_arn
+      }
+      Condition = {
+        StringEquals = {
+          "${module.eks.oidc_provider}:aud" = "sts.amazonaws.com"
+          "${module.eks.oidc_provider}:sub" = "system:serviceaccount:cert-manager:cert-manager"
+        }
+      }
+    }]
+  })
+}
+
+resource "aws_iam_role_policy" "cert_manager" {
+  name = "${var.cluster_name}-cert-manager-policy"
+  role = aws_iam_role.cert_manager.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "route53:GetChange",
+          "route53:ChangeResourceRecordSets",
+          "route53:ListResourceRecordSets"
+        ]
+        Resource = [
+          "arn:aws:route53:::hostedzone/${data.aws_route53_zone.main.zone_id}",
+          "arn:aws:route53:::change/*"
+        ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "route53:ListHostedZones",
+          "route53:ListHostedZonesByName"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}
