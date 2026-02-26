@@ -22,3 +22,8 @@ output "cert_manager_role_arn" {
 output "hosted_zone_id" {
   value = data.aws_route53_zone.main.zone_id
 }
+
+# External DNS Outputs
+output "external_dns_role_arn" {
+  value = aws_iam_role.external_dns.arn
+}
