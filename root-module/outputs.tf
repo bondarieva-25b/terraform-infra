@@ -27,3 +27,16 @@ output "hosted_zone_id" {
 output "external_dns_role_arn" {
   value = aws_iam_role.external_dns.arn
 }
+
+# Grafana Outputs
+output "grafana_admin_secret_name" {
+  value = aws_secretsmanager_secret.grafana_admin.name
+}
+
+output "grafana_admin_secret_arn" {
+  value = aws_secretsmanager_secret.grafana_admin.arn
+}
+
+output "grafana_irsa_role_arn" {
+  value = aws_iam_role.grafana.arn
+}
