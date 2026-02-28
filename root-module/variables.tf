@@ -56,3 +56,22 @@ variable "node_max_size" {
 variable "node_desired_size" {
   type = number
 }
+
+# Grafana
+variable "grafana_admin_username" {
+  type        = string
+  description = "Grafana admin username stored in Secrets Manager"
+  default     = "admin"
+}
+
+variable "grafana_namespace" {
+  type        = string
+  description = "Namespace where Grafana runs"
+  default     = "monitoring"
+}
+
+variable "grafana_serviceaccount_name" {
+  type        = string
+  description = "Grafana ServiceAccount name (must match Helm chart SA)"
+  default     = "grafana-sa"
+}

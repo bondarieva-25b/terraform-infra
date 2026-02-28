@@ -15,3 +15,8 @@ github_cicd_role_arn      = "arn:aws:iam::058316962389:role/GitHubActionsCICDRol
 node_min_size             = 1
 node_max_size             = 3
 node_desired_size         = 2
+
+# Grafana configs
+grafana_admin_username      = "admin"
+grafana_namespace           = "monitoring"
+grafana_serviceaccount_name = "grafana-sa"
