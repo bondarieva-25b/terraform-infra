@@ -54,3 +54,12 @@ output "grafana_admin_secret_arn" {
 output "grafana_irsa_role_arn" {
   value = aws_iam_role.grafana.arn
 }
+
+# Proshop Outputs
+output "proshop_secrets_role_arn" {
+  value = aws_iam_role.proshop_secrets.arn
+}
+
+output "proshop_secret_name" {
+  value = aws_secretsmanager_secret.proshop_backend.name
+}
