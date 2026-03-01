@@ -5,7 +5,7 @@ AWS infrastructure for the EKS platform, managed entirely through Terraform.
 ## 🌐 What It Deploys
 
 ### 🔵 VPC Module
-VPC with public and private subnets across 3 AZs, Internet Gateway, NAT Gateway, and route tables.
+VPC with public and private subnets across 3 AZs, Internet Gateway, and route tables.
 
 ### 🟠 EKS Module
 - EKS cluster (Kubernetes 1.34) with API authentication mode
