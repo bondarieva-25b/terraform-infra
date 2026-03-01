@@ -19,6 +19,7 @@ module "eks" {
   admin_user_arn            = var.admin_user_arn
   github_terraform_role_arn = var.github_terraform_role_arn
   github_cicd_role_arn      = var.github_cicd_role_arn
+  gitlab_cicd_role_arn      = var.gitlab_cicd_role_arn
   node_min_size             = var.node_min_size
   node_max_size             = var.node_max_size
   node_desired_size         = var.node_desired_size

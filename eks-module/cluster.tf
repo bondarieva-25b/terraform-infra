@@ -94,3 +94,25 @@ resource "aws_eks_access_policy_association" "github_cicd" {
 
   depends_on = [aws_eks_access_entry.github_cicd]
 }
+
+resource "aws_eks_access_entry" "gitlab_cicd" {
+  count = var.gitlab_cicd_role_arn != "" ? 1 : 0
+
+  cluster_name  = aws_eks_cluster.this.name
+  principal_arn = var.gitlab_cicd_role_arn
+  type          = "STANDARD"
+}
+
+resource "aws_eks_access_policy_association" "gitlab_cicd" {
+  count = var.gitlab_cicd_role_arn != "" ? 1 : 0
+
+  cluster_name  = aws_eks_cluster.this.name
+  principal_arn = var.gitlab_cicd_role_arn
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+
+  access_scope {
+    type = "cluster"
+  }
+
+  depends_on = [aws_eks_access_entry.gitlab_cicd]
+}

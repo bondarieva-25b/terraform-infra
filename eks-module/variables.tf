@@ -28,6 +28,11 @@ variable "github_cicd_role_arn" {
   description = "ARN of the IAM role for GitHub CI/CD to be added as an admin to the EKS cluster"
 }
 
+variable "gitlab_cicd_role_arn" {
+  type        = string
+  description = "ARN of the IAM role for GitLab CI/CD to be added as an admin to the EKS cluster"
+}
+
 variable "vpc_id" {
   type        = string
   description = "VPC ID where the EKS cluster will be deployed"

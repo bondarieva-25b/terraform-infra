@@ -44,6 +44,10 @@ variable "github_cicd_role_arn" {
   type = string
 }
 
+variable "gitlab_cicd_role_arn" {
+  type = string
+}
+
 # ASG
 variable "node_min_size" {
   type = number
