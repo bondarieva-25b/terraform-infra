@@ -1,3 +1,12 @@
+# VPC outputs
+output "vpc_id" {
+  value = module.custom_vpc.vpc_id
+}
+
+output "private_subnet_ids" {
+  value = module.custom_vpc.private_subnet_ids_ordered
+}
+
 output "cluster_name" {
   value = module.eks.cluster_name
 }
@@ -12,6 +21,11 @@ output "cluster_version" {
 
 output "configure_kubectl" {
   value = "aws eks update-kubeconfig --region us-east-1 --name ${module.eks.cluster_name}"
+}
+
+# EKS node security group output
+output "eks_node_security_group_id" {
+  value = module.eks.node_security_group_id
 }
 
 # Cert Manager Outputs
