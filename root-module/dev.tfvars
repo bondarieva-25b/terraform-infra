@@ -14,8 +14,8 @@ github_terraform_role_arn = "arn:aws:iam::058316962389:role/GitHubActionsTFRole"
 github_cicd_role_arn      = "arn:aws:iam::058316962389:role/GitHubActionsCICDRole"
 gitlab_cicd_role_arn      = "arn:aws:iam::058316962389:role/GitLabCIRole"
 node_min_size             = 1
-node_max_size             = 3
-node_desired_size         = 2
+node_max_size             = 1
+node_desired_size         = 1
 
 # Grafana configs
 grafana_admin_username      = "admin"
