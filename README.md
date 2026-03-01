@@ -1,38 +1,127 @@
-# terraform-infra
+# 🏗️ Terraform Infrastructure
 
-This repository contains the base Terraform code, including a structured setup with a few dummy modules.
+AWS infrastructure for the EKS platform, managed entirely through Terraform.
 
-## Guidelines
+## 🌐 What It Deploys
 
-- **Do Not Delete Existing Files**: Retain the current structure and files, including dummy modules.
-- **Modifications**: Feel free to:
-  1. **Add**: Create new folders or files for additional modules.
-  2. **Edit**: Modify contents of existing files like `dev.tfvars`, `main.tf`, or files in the root module as needed.
+### 🔵 VPC Module
+VPC with public and private subnets across 3 AZs, Internet Gateway, NAT Gateway, and route tables.
 
-## Contribution
+### 🟠 EKS Module
+- EKS cluster (Kubernetes 1.34) with API authentication mode
+- Self-managed nodes via ASG — 80% spot / 20% on-demand with 3 instance types
+- AL2023 EKS-optimized AMI with nodeadm bootstrap
+- Add-ons: VPC CNI, CoreDNS, kube-proxy, EBS CSI driver, Pod Identity agent
+- OIDC provider for IRSA
 
-- Maintain the overall structure.
-- Ensure new additions are consistent with the existing setup.
-- Document significant changes for clarity.
+### 🟣 Platform IRSA Roles (root module)
+- 🔒 **cert-manager** — Route 53 access for DNS-01 TLS challenges
+- 🌍 **external-dns** — Route 53 access for automatic DNS record management
+- 📊 **grafana** — Secrets Manager for admin credentials
+- 🛒 **proshop** — Secrets Manager access for backend app secrets
 
-## Workflow for Terraform State Management
+## 📦 Prerequisites
 
-This repository uses a dynamic approach to manage Terraform state files across different branches to prevent conflicts and ensure seamless collaboration.
+- AWS CLI configured
+- Terraform >= 1.13.3
+- S3 bucket for remote state
 
-### Key Points:
+---
 
-- **Dynamic Bucket Key with Account Number**: The Terraform state file's bucket key includes the AWS account number, making the YAML file dynamic and eliminating the need for manual adjustments per team.
+## ⚠️ Remote Backend — Read This First
 
-- **Branch Name as State File Key**: We use the branch name as the state file key in the S3 bucket. This allows multiple users to run Terraform in the same AWS account from different branches without overwriting each other's state files.
+Terraform stores a **state file** that tracks every resource it manages. The remote backend stores this state in S3 so that everyone (and CI/CD) works from the same source of truth.
 
-- **Handling Resource Conflicts**: Since all changes are eventually merged into the main branch, running the same Terraform code from feature branches in the main branch would typically cause conflicts (e.g., a security group with the same name already exists). To avoid the cost of using different accounts or `.tfvars` for `main` branch, we adopt a functional workaround:
+### 🔧 How to configure
 
-  - **Terraform Destroy on PR Approval**: we have a Terraform destroy job that triggers upon PR approval into the main branch. This ensures resources created in feature branches are destroyed before being applied in the main branch, preventing conflicts. The workflow for this can be found in `.github/workflows/terraform-destroy-dev.yaml`
+Your backend is configured in `providers.tf`:
 
-### Workflow Overview:
+```hcl
+terraform {
+  backend "s3" {
+    bucket       = "final-project-practice-058316962389-tfstate"
+    key          = "infra/terraform.tfstate"
+    region       = "us-east-1"
+    use_lockfile = true
+  }
+}
+```
 
-1. **Terraform Apply** in `feature/x` branch *when a commit is pushed.*
-2. **Terraform Destroy** in `feature/x` branch *when a PR from `feature-x` to `main` branch is approved.*
-3. **Terraform Apply** in `main` branch *after PR merge.*
+`use_lockfile = true` enables S3-native state locking (available in Terraform 1.13.3+). No DynamoDB table needed — Terraform creates a `.tflock` file in the same S3 bucket to prevent concurrent applies.
 
-This approach ensures efficient resource management and conflict resolution in a multi-branch, multi-user Terraform environment.
+Before running anything:
+
+1. ✅ Make sure the S3 bucket exists in your AWS account
+2. ✅ Run `terraform init` — this connects Terraform to the remote state
+
+### 🚨 Can I run both locally and through GitHub Actions?
+
+**Yes!** As long as both are pointing to the **same AWS account** and the **same S3 state bucket**, it works fine. Terraform uses S3-native locking (`use_lockfile = true`) to prevent two applies from running at the same time.
+
+The problems start when people use **different AWS accounts** locally vs in CI — then you get half your resources in one account and half in another. As long as the account and state bucket match, you're good.
+
+### ✅ Quick check before running
+
+```bash
+# This should show the same account ID you use in GitHub Actions
+aws sts get-caller-identity
+```
+
+---
+
+## 💻 Running Locally
+
+```bash
+# 1. Navigate to root module
+cd root-module
+
+# 2. Initialize (downloads providers, connects to remote state)
+terraform init
+
+# 3. Preview changes
+terraform plan -var-file=dev.tfvars
+
+# 4. Apply changes
+terraform apply -var-file=dev.tfvars
+```
+
+---
+
+## 🚀 Running Through GitHub Actions
+
+The pipeline runs automatically on push:
+
+```
+Push to any branch     →  ✅ terraform plan →  ▶️ terraform apply
+```
+
+GitHub Actions authenticates to AWS using **OIDC** — no static credentials. The workflow assumes an IAM role via `aws-actions/configure-aws-credentials`, which points to the same AWS account and same S3 backend as local runs.
+
+---
+
+## 🔥 Common Mistakes to Avoid
+
+| ❌ Mistake | ✅ Fix |
+|---|---|
+| Local CLI uses account A, GitHub Actions uses account B | Make sure both use the **same AWS account** |
+| Forgot `terraform init` after cloning | Always run `init` first |
+| Using wrong `.tfvars` file | Double check: `dev.tfvars` for dev |
+| Running `apply` without reviewing `plan` | Always read the plan output before applying |
+| S3 backend bucket is in a different account | Backend bucket must be in the same account you're deploying to |
+| Using Terraform < 1.13.3 | `use_lockfile` requires Terraform 1.13.3+. Run `terraform version` to check |
+
+---
+
+## 📤 Outputs
+
+| Output | Description |
+|---|---|
+| 🏷️ `cluster_name` | EKS cluster name |
+| 🔗 `cluster_endpoint` | EKS API endpoint |
+| 📌 `cluster_version` | Kubernetes version |
+| ⌨️ `configure_kubectl` | Command to set up kubeconfig |
+| 🔒 `cert_manager_role_arn` | IRSA role for cert-manager |
+| 🌍 `external_dns_role_arn` | IRSA role for external-dns |
+| 🗺️ `hosted_zone_id` | Route 53 hosted zone ID |
+| 🛒 `proshop_secrets_role_arn` | IRSA role for proshop backend |
+| 🔑 `proshop_secret_name` | Secrets Manager secret name |
