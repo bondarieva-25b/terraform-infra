@@ -27,6 +27,7 @@ resource "aws_subnet" "public" {
     environment                                 = var.environment
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
     "kubernetes.io/role/elb"                    = "1"
+    "karpenter.sh/discovery"                    = var.cluster_name
   }
 }
 
