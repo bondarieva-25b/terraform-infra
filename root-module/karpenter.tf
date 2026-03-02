@@ -50,9 +50,9 @@ resource "aws_iam_role_policy" "karpenter_controller" {
         Resource = "*"
       },
       {
-        Sid    = "PassRole"
-        Effect = "Allow"
-        Action = "iam:PassRole"
+        Sid      = "PassRole"
+        Effect   = "Allow"
+        Action   = "iam:PassRole"
         Resource = aws_iam_role.karpenter_node.arn
       },
       {
@@ -81,21 +81,21 @@ resource "aws_iam_role_policy" "karpenter_controller" {
         Resource = "*"
       },
       {
-        Sid    = "SSM"
-        Effect = "Allow"
-        Action = "ssm:GetParameter"
+        Sid      = "SSM"
+        Effect   = "Allow"
+        Action   = "ssm:GetParameter"
         Resource = "arn:aws:ssm:us-east-1::parameter/aws/service/eks/optimized-ami/*"
       },
       {
-        Sid    = "Pricing"
-        Effect = "Allow"
-        Action = "pricing:GetProducts"
+        Sid      = "Pricing"
+        Effect   = "Allow"
+        Action   = "pricing:GetProducts"
         Resource = "*"
       },
       {
-        Sid    = "EKS"
-        Effect = "Allow"
-        Action = "eks:DescribeCluster"
+        Sid      = "EKS"
+        Effect   = "Allow"
+        Action   = "eks:DescribeCluster"
         Resource = "arn:aws:eks:us-east-1:058316962389:cluster/${var.cluster_name}"
       }
     ]
