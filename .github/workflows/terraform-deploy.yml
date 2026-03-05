@@ -5,6 +5,7 @@ on:
             - main
             - develop
             - 'feature/**'
+            - 'chore/**'
 
 # permission can be added at job level or workflow level
 permissions:
@@ -17,7 +18,8 @@ jobs:
           ${{
             github.ref == 'refs/heads/main' && 'dev' ||
             github.ref == 'refs/heads/develop' && 'dev' ||
-            startsWith(github.ref, 'refs/heads/feature/') && 'dev'
+            startsWith(github.ref, 'refs/heads/feature/') && 'dev' ||
+            startsWith(github.ref, 'refs/heads/chore/') && 'dev'
           }}
         runs-on: ubuntu-22.04
 
