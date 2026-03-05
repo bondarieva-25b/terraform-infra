@@ -44,5 +44,5 @@ jobs:
         - name: Check Terraform Format (basic linting)
           run: terraform fmt -check
 
-        - name: Deploy Infrastructure
-          run: terraform apply -var-file=${{ vars.STAGE }}.tfvars -input=false -auto-approve
+        - name: Destroy Infrastructure
+          run: terraform destroy -var-file=${{ vars.STAGE }}.tfvars -input=false -auto-approve
