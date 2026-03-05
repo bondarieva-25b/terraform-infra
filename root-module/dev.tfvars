@@ -8,7 +8,7 @@ public_subnet_cidrs  = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
 private_subnet_cidrs = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
 
 # EKS configs
-kubernetes_version        = "1.34"
+kubernetes_version        = "1.35"
 admin_user_arn            = ""
 github_terraform_role_arn = "arn:aws:iam::058316962389:role/GitHubActionsTFRole"
 github_cicd_role_arn      = "arn:aws:iam::058316962389:role/GitHubActionsCICDRole"
